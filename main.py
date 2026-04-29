@@ -2,10 +2,21 @@ from scrapper import JobScraper
 
 URL = "https://globaljobs.org"
 
-scraper = JobScraper()
+def main():
+    scrapper = JobScraper()
 
-scraper.open_site(URL)
+    try:
+        scrapper.open_site(URL)
 
-input("Press ENTER to close browser...")
+        input("Press ENTER to extract job")
+        scrapper.get_first_job()
 
-scraper.close()
+        input("Press Enter to close browser")
+
+    except Exception as e:
+        print("Error:", e)
+    finally:
+        scrapper.close()
+
+if __name__ == "__main__":
+    main()
