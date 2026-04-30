@@ -39,7 +39,7 @@ class JobScraper:
             href = link.get_attribute("href")
 
             # filter meaningful links
-            if text and href and len(text) > 10:
+            if "/job/" in href.lower() or "/jobs/" in href.lower():
                 print("\n FIRST JOB-LIKE ITEM FOUND")
                 print("Title:", text)
                 print("Link:", href)
