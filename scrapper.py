@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 
+
 class JobScraper:
     def __init__(self):
         options = Options()
@@ -19,37 +20,32 @@ class JobScraper:
         )
 
         print("Page loaded successfully")
+        print("Page Title:", self.driver.title)
 
-    def get_driver(self):
-        return self.driver
-
-    def close(self):
-        self.driver.quit()
+    def debug_page(self):
+        print("\n PAGE SNAPSHOT:")
+        print(self.driver.page_source[:1500])
 
     def get_first_job(self):
         driver = self.driver
-        job_cards = driver.find_elements(By.CSS_SELECTOR, "article, .job, .job-card, li")
 
-        print(f"Found {len(job_cards)} potential job cards")
+        # NEW STRATEGY: get all links, not fake job-card selectors
+        links = driver.find_elements(By.TAG_NAME, "a")
 
-        if not job_cards:
-            print("No job cards found. Selector needs adjustment.")
-            return
+        print(f"Total links found: {len(links)}")
 
-        job = job_cards[0]
+        for link in links:
+            text = link.text.strip()
+            href = link.get_attribute("href")
 
-        try:
-            title = job.text  
+            # filter meaningful links
+            if text and href and len(text) > 10:
+                print("\n FIRST JOB-LIKE ITEM FOUND")
+                print("Title:", text)
+                print("Link:", href)
+                return
 
-            link = ""
-            try:
-                link = job.find_element(By.TAG_NAME, "a").get_attribute("href")
-            except:
-                pass
+        print(" No meaningful job links found")
 
-            print("\n FIRST JOB FOUND")
-            print("Title/Text:", title)
-            print("Link:", link)
-
-        except Exception as e:
-            print("Error extracting job:", e)
+    def close(self):
+        self.driver.quit()
