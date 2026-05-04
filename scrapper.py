@@ -35,11 +35,16 @@ class JobScraper:
         print(f"Total links found: {len(links)}")
 
         for link in links:
-            text = link.text.strip()
+            text = (link.get_attribute("inner text") or "").strip()
             href = link.get_attribute("href")
 
+            print(f"TEXT: {text[:40]} | LINK: {href}")
+            input("\n🛑 Inspect these links. Press ENTER to continue...")
+            if not href or not text:
+                continue
+
             # filter meaningful links
-            if "/job/" in href.lower() or "/jobs/" in href.lower():
+            if href and "job" in href.lower() and len(text) > 5:
                 print("\n FIRST JOB-LIKE ITEM FOUND")
                 print("Title:", text)
                 print("Link:", href)
