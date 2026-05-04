@@ -12,13 +12,13 @@ def main():
 
         input("\n Press ENTER to inspect page...")
 
-        scrapper.debug_page()
+        jobs = scrapper.get_first_job()
 
-        input("\n Press ENTER to extract first job...")
-
-        scrapper.get_first_job()
-
-        input("\n Press ENTER to close browser...")
+        if jobs:
+            scrapper.save_to_csv(jobs)
+        else:
+            print("No jobs found")
+            input("\n Press ENTER to close browser...")
 
     except Exception as e:
         print(" Error:", e)

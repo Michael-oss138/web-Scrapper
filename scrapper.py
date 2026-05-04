@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+import csv
 
 
 class JobScraper:
@@ -32,25 +33,46 @@ class JobScraper:
         # NEW STRATEGY: get all links, not fake job-card selectors
         links = driver.find_elements(By.TAG_NAME, "a")
 
+        jobs = []
+
         print(f"Total links found: {len(links)}")
 
         for link in links:
-            text = (link.get_attribute("inner text") or "").strip()
+            #text = (link.get_attribute("inner text") or "").strip()
             href = link.get_attribute("href")
 
-            print(f"TEXT: {text[:40]} | LINK: {href}")
-            input("\n🛑 Inspect these links. Press ENTER to continue...")
-            if not href or not text:
+#            print(f"TEXT: {text[:40]} | LINK: {href}")
+ #           input("\n🛑 Inspect these links. Press ENTER to continue...")
+            if not href:
                 continue
 
             # filter meaningful links
-            if href and "job" in href.lower() and len(text) > 5:
-                print("\n FIRST JOB-LIKE ITEM FOUND")
-                print("Title:", text)
-                print("Link:", href)
-                return
+            if "/jobs/" in href :
+                raw_title = href.split("/")[-1]
+                title = raw_title.replace("-", " ")
+                jobs.append({
+                    "title": title,
+                    "link": href
+                })
+        print(f" Extracted {len(jobs)} jobs")
+        return jobs
 
-        print(" No meaningful job links found")
+            #if href and "job" in href.lower() and len(text) > 5:
+               # print("\n FIRST JOB-LIKE ITEM FOUND")
+                #print("Title:", text)
+                #print("Link:", href)
+                #return
+
+       # print(" No meaningful job links found")
+    def save_to_csv(self, jobs):
+        filename = "jobs.csv"
+
+        with open(filename, mode="w", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(file, fieldnames=["title", "link"])
+            writer.writeheader()
+            writer.writerows(jobs)
+
+        print(f" Jobs saved to {filename}")
 
     def close(self):
         self.driver.quit()
