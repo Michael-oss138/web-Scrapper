@@ -1,6 +1,6 @@
 from scrapper import JobScraper
 
-URL = "https://www.globaljobs.org/"
+url = "https://www.globaljobs.org/"
 
 def main():
     scrapper = JobScraper()
@@ -8,7 +8,7 @@ def main():
     try:
         print("Starting scraper...")
 
-        scrapper.open_site(URL)
+        scrapper.open_site(url)
 
         input("\n Press ENTER to inspect page...")
 
